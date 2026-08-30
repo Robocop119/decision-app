@@ -6,7 +6,15 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    connection = sqlite3.connect("decision.db")
+
+    decisions = connection.execute(
+        "SELECT id, title FROM decisions"
+    ).fetchall()
+
+    connection.close()
+
+    return render_template("index.html", decisions=decisions)
 
 
 @app.route("/create", methods=["GET", "POST"])
@@ -27,3 +35,21 @@ def create():
         return f"You created: {title}"
 
     return render_template("create.html")
+
+
+@app.route("/decision/<int:decision_id>")
+def decision_detail(decision_id):
+    connection = sqlite3.connect("decision.db")
+
+    decision = connection.execute(
+        "SELECT id, title FROM decisions WHERE id = ?",
+        (decision_id,)
+    ).fetchone()
+
+    connection.close()
+
+    return render_template("decision.html", decision=decision)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

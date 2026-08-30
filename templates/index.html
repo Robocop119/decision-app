@@ -3,6 +3,18 @@
 
 <head>
     <title>Decision App</title>
+
+    <h2>Your decisions</h2>
+
+    <ul>
+        {% for decision in decisions %}
+        <li>
+            <a href="/decision/{{ decision[0] }}">
+                {{ decision[1] }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
 </head>
 
 <body>
