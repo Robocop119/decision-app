@@ -17,3 +17,12 @@ CREATE TABLE criteria (
     weight REAL NOT NULL,
     FOREIGN KEY (decision_id) REFERENCES decisions(id)
 );
+
+CREATE TABLE scores (
+    id INTEGER PRIMARY KEY,
+    alternative_id INTEGER NOT NULL,
+    criterion_id INTEGER NOT NULL,
+    value REAL NOT NULL,
+    FOREIGN KEY (alternative_id) REFERENCES alternatives(id),
+    FOREIGN KEY (criterion_id) REFERENCES criteria(id)
+);

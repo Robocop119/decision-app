@@ -9,10 +9,64 @@
     <h1>{{ decision[1] }}</h1>
 
     <h2>Alternatives</h2>
-    <p>No alternatives yet.</p>
+
+    <form method="post" action="/decision/{{ decision[0] }}/alternative">
+        <input type="text" name="name" placeholder="Alternative name">
+        <button type="submit">Add alternative</button>
+    </form>
+
+    <ul>
+        {% for alternative in alternatives %}
+        <li>{{ alternative[1] }}</li>
+        {% endfor %}
+    </ul>
 
     <h2>Criteria</h2>
-    <p>No criteria yet.</p>
+
+    <form method="post" action="/decision/{{ decision[0] }}/criterion">
+        <input type="text" name="name" placeholder="Criterion name">
+        <input type="number" name="weight" step="0.01" placeholder="Weight">
+        <button type="submit">Add criterion</button>
+    </form>
+
+    <ul>
+        {% for criterion in criteria %}
+        <li>{{ criterion[1] }} - {{ criterion[2] }}</li>
+        {% endfor %}
+    </ul>
+
+
+    <h2>Scores</h2>
+
+    <form method="post" action="/decision/{{ decision[0] }}/score">
+        <select name="alternative_id">
+            {% for alternative in alternatives %}
+            <option value="{{ alternative[0] }}">
+                {{ alternative[1] }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <select name="criterion_id">
+            {% for criterion in criteria %}
+            <option value="{{ criterion[0] }}">
+                {{ criterion[1] }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <input type="number" name="value" min="0" max="10" step="0.1" placeholder="Score">
+
+        <button type="submit">Add score</button>
+    </form>
+
+    <h2>Results</h2>
+
+    <ol>
+        {% for result in ranking %}
+        <li>{{ result[0] }} - {{ result[1] }}</li>
+        {% endfor %}
+    </ol>
 </body>
 
 </html>
