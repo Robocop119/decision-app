@@ -41,7 +41,7 @@
     <form method="post" action="/decision/{{ decision[0] }}/score">
         <select name="alternative_id">
             {% for alternative in alternatives %}
-            <option value="{{ alternative[0] }}">
+            <option value="{{ alternative[0] }}" {% if alternative[0]==selected_alternative %}selected{% endif %}>
                 {{ alternative[1] }}
             </option>
             {% endfor %}
@@ -49,7 +49,7 @@
 
         <select name="criterion_id">
             {% for criterion in criteria %}
-            <option value="{{ criterion[0] }}">
+            <option value="{{ criterion[0] }}" {% if criterion[0]==selected_criterion %}selected{% endif %}>
                 {{ criterion[1] }}
             </option>
             {% endfor %}
@@ -62,11 +62,15 @@
 
     <h2>Results</h2>
 
+    {% if not weights_valid %}
+    <p>Criterion weights must add up to 1.0. Current total: {{ total_weight }}</p>
+    {% else %}
     <ol>
         {% for result in ranking %}
         <li>{{ result[0] }} - {{ result[1] }}</li>
         {% endfor %}
     </ol>
+    {% endif %}
 </body>
 
 </html>

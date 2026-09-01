@@ -24,5 +24,6 @@ CREATE TABLE scores (
     criterion_id INTEGER NOT NULL,
     value REAL NOT NULL,
     FOREIGN KEY (alternative_id) REFERENCES alternatives(id),
-    FOREIGN KEY (criterion_id) REFERENCES criteria(id)
+    FOREIGN KEY (criterion_id) REFERENCES criteria(id),
+    UNIQUE (alternative_id, criterion_id)
 );

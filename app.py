@@ -40,6 +40,9 @@ def create():
 
 @app.route("/decision/<int:decision_id>")
 def decision_detail(decision_id):
+    selected_alternative = request.args.get("alternative", type=int)
+    selected_criterion = request.args.get("criterion", type=int)
+
     connection = sqlite3.connect("decision.db")
 
     decision = connection.execute(
@@ -57,6 +60,9 @@ def decision_detail(decision_id):
         (decision_id,)
     ).fetchall()
 
+    total_weight = sum(criterion[2] for criterion in criteria)
+    weights_valid = abs(total_weight - 1.0) < 0.001
+
     scores = connection.execute(
         """
         SELECT alternative_id, criterion_id, value
@@ -66,20 +72,21 @@ def decision_detail(decision_id):
 
     ranking = []
 
-    for alternative in alternatives:
-        alternative_id = alternative[0]
-        alternative_name = alternative[1]
+    if weights_valid:
+        for alternative in alternatives:
+            alternative_id = alternative[0]
+            alternative_name = alternative[1]
 
-        alternative_scores = [
-            score for score in scores
-            if score[0] == alternative_id
-        ]
+            alternative_scores = [
+                score for score in scores
+                if score[0] == alternative_id
+            ]
 
-        total = calculate_score(criteria, alternative_scores)
+            total = calculate_score(criteria, alternative_scores)
 
-        ranking.append((alternative_name, total))
+            ranking.append((alternative_name, round(total, 2)))
 
-    ranking.sort(key=lambda item: item[1], reverse=True)
+        ranking.sort(key=lambda item: item[1], reverse=True)
 
     connection.close()
 
@@ -89,7 +96,11 @@ def decision_detail(decision_id):
         alternatives=alternatives,
         criteria=criteria,
         scores=scores,
-        ranking=ranking
+        ranking=ranking,
+        weights_valid=weights_valid,
+        total_weight=total_weight,
+        selected_alternative=selected_alternative,
+        selected_criterion=selected_criterion
     )
 
 
@@ -136,18 +147,34 @@ def add_score(decision_id):
 
     connection = sqlite3.connect("decision.db")
 
-    connection.execute(
+    existing_score = connection.execute(
         """
-        INSERT INTO scores (alternative_id, criterion_id, value)
-        VALUES (?, ?, ?)
+        SELECT id FROM scores
+        WHERE alternative_id = ? AND criterion_id = ?
         """,
-        (alternative_id, criterion_id, value)
-    )
+        (alternative_id, criterion_id)
+    ).fetchone()
+
+    if existing_score:
+        connection.execute(
+            "UPDATE scores SET value = ? WHERE id = ?",
+            (value, existing_score[0])
+        )
+    else:
+        connection.execute(
+            """
+            INSERT INTO scores (alternative_id, criterion_id, value)
+            VALUES (?, ?, ?)
+            """,
+            (alternative_id, criterion_id, value)
+        )
 
     connection.commit()
     connection.close()
 
-    return redirect(f"/decision/{decision_id}")
+    return redirect(
+        f"/decision/{decision_id}?alternative={alternative_id}&criterion={criterion_id}"
+    )
 
 
 if __name__ == "__main__":
