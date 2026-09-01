@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>{{ decision[1] }}</title>
 </head>
 
@@ -60,17 +61,22 @@
         <button type="submit">Add score</button>
     </form>
 
-    <h2>Results</h2>
+    <div class="results">
+        <h2>Results</h2>
 
-    {% if not weights_valid %}
-    <p>Criterion weights must add up to 1.0. Current total: {{ total_weight }}</p>
-    {% else %}
-    <ol>
-        {% for result in ranking %}
-        <li>{{ result[0] }} - {{ result[1] }}</li>
-        {% endfor %}
-    </ol>
-    {% endif %}
+        {% if not weights_valid %}
+        <p>
+            Criterion weights must add up to 1.0.
+            Current total: {{ total_weight }}
+        </p>
+        {% else %}
+        <ol>
+            {% for result in ranking %}
+            <li>{{ result[0] }} - {{ result[1] }}</li>
+            {% endfor %}
+        </ol>
+        {% endif %}
+    </div>
 </body>
 
 </html>
