@@ -4,6 +4,13 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Decision App</title>
+</head>
+
+<body>
+    <h1>Decision App</h1>
+    <p>Welcome to the Decision App!</p>
+
+    <a href="/create">Create a decision</a>
 
     <h2>Your decisions</h2>
 
@@ -16,13 +23,6 @@
         </li>
         {% endfor %}
     </ul>
-</head>
-
-<body>
-    <h1>Decision App</h1>
-    <p>Welcome to the Decision App!</p>
-
-    <a href="/create">Create a decision</a>
 </body>
 
 </html>
