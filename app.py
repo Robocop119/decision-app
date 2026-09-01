@@ -23,13 +23,14 @@ def create():
     if request.method == "POST":
         title = request.form.get("title")
 
-        connection = sqlite3.connect("decision.db")
+        if not title:
+            return redirect("/create")
 
+        connection = sqlite3.connect("decision.db")
         connection.execute(
             "INSERT INTO decisions (title) VALUES (?)",
             (title,)
         )
-
         connection.commit()
         connection.close()
 
@@ -108,6 +109,11 @@ def decision_detail(decision_id):
 def add_alternative(decision_id):
     name = request.form.get("name")
 
+    if not name:
+        return redirect(f"/decision/{decision_id}")
+
+    name = request.form.get("name")
+
     connection = sqlite3.connect("decision.db")
 
     connection.execute(
@@ -126,6 +132,17 @@ def add_criterion(decision_id):
     name = request.form.get("name")
     weight = request.form.get("weight")
 
+    if not name or not weight:
+        return redirect(f"/decision/{decision_id}")
+
+    weight = float(weight)
+
+    if weight <= 0:
+        return redirect(f"/decision/{decision_id}")
+
+    name = request.form.get("name")
+    weight = request.form.get("weight")
+
     connection = sqlite3.connect("decision.db")
 
     connection.execute(
@@ -141,6 +158,18 @@ def add_criterion(decision_id):
 
 @app.route("/decision/<int:decision_id>/score", methods=["POST"])
 def add_score(decision_id):
+    alternative_id = request.form.get("alternative_id")
+    criterion_id = request.form.get("criterion_id")
+    value = request.form.get("value")
+
+    if not alternative_id or not criterion_id or not value:
+        return redirect(f"/decision/{decision_id}")
+
+    value = float(value)
+
+    if value < 0 or value > 10:
+        return redirect(f"/decision/{decision_id}")
+
     alternative_id = request.form.get("alternative_id")
     criterion_id = request.form.get("criterion_id")
     value = request.form.get("value")
