@@ -1,6 +1,6 @@
 # Decision App
 
-#### Video Demo: https://youtu.be/jyPRwIA0VS0
+#### Video Demo: Submitted privately to CS50
 
 Decision App is a simple web application for comparing different alternatives using weighted criteria.
 
