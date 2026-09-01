@@ -1,3 +1,5 @@
+# AI assistance: ChatGPT was used for explanations and debugging help during development. Coding was done by the user.
+
 import sqlite3
 from flask import Flask, render_template, request, redirect
 from engine.decision_engine import calculate_score
@@ -34,7 +36,7 @@ def create():
         connection.commit()
         connection.close()
 
-        return f"You created: {title}"
+        return redirect("/")
 
     return render_template("create.html")
 
